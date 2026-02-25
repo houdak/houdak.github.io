@@ -1,0 +1,215 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// ── Add your images here ─────────────────────────────────────────────────────
+// Each entry: { src, alt, caption? }
+// Place image files in the public/ folder, then reference as "/your-image.jpg"
+const images: { src: string; alt: string; caption?: string }[] = [
+	// { src: "/microscopy-1.jpg", alt: "Confocal image of hippocampal neurons", caption: "CA1 pyramidal neurons, mouse hippocampus" },
+	// { src: "/synapse.jpg",      alt: "Synapse electron micrograph",           caption: "Dendritic spine undergoing LTP" },
+	// Add more images above this line
+];
+
+// ── Add your videos here ─────────────────────────────────────────────────────
+// Each entry: { embedUrl, title, caption? }
+// For YouTube: use the embed URL format https://www.youtube.com/embed/VIDEO_ID
+const videos: { embedUrl: string; title: string; caption?: string }[] = [
+	// { embedUrl: "https://www.youtube.com/embed/VIDEO_ID", title: "Calcium imaging timelapse", caption: "GCaMP6 activity in cortical neurons" },
+	// Add more videos above this line
+];
+
+const hasImages = images.length > 0;
+const hasVideos = videos.length > 0;
+---
+
+<Layout title="Gallery — Houda Khaled">
+	<main>
+		<header class="page-header">
+			<p class="eyebrow">Fun Science</p>
+			<h1>Gallery</h1>
+			<div class="rule"></div>
+		</header>
+
+		{hasImages && (
+			<section class="section reveal">
+				<h2 class="section-label">Images</h2>
+				<div class="image-grid">
+					{images.map(img => (
+						<figure class="img-card">
+							<img src={img.src} alt={img.alt} loading="lazy" />
+							{img.caption && <figcaption>{img.caption}</figcaption>}
+						</figure>
+					))}
+				</div>
+			</section>
+		)}
+
+		{hasVideos && (
+			<section class="section reveal">
+				<h2 class="section-label">Videos</h2>
+				<div class="video-list">
+					{videos.map(vid => (
+						<figure class="video-card">
+							<div class="video-wrap">
+								<iframe
+									src={vid.embedUrl}
+									title={vid.title}
+									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+									allowfullscreen
+									loading="lazy"
+								></iframe>
+							</div>
+							{vid.caption && <figcaption>{vid.caption}</figcaption>}
+						</figure>
+					))}
+				</div>
+			</section>
+		)}
+
+		{!hasImages && !hasVideos && (
+			<section class="empty-state reveal">
+				<p class="empty-text">Images and videos coming soon.</p>
+			</section>
+		)}
+	</main>
+</Layout>
+
+<script>
+	const reveals = document.querySelectorAll<HTMLElement>('.reveal');
+	const io = new IntersectionObserver((entries) => {
+		entries.forEach(e => {
+			if (e.isIntersecting) {
+				(e.target as HTMLElement).classList.add('in-view');
+				io.unobserve(e.target);
+			}
+		});
+	}, { threshold: 0.05 });
+	reveals.forEach(el => io.observe(el));
+</script>
+
+<style>
+	main {
+		max-width: 860px;
+		margin: 0 auto;
+		padding: 3rem 1.5rem 6rem;
+	}
+
+	/* ── Page header ── */
+	.page-header {
+		margin-bottom: 4rem;
+	}
+
+	.eyebrow {
+		font-size: 0.78rem;
+		font-weight: 500;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		margin-bottom: 0.5rem;
+		opacity: 0.55;
+	}
+
+	h1 {
+		font-family: 'Fraunces', serif;
+		font-style: italic;
+		font-size: clamp(3rem, 10vw, 5.5rem);
+		line-height: 1;
+		letter-spacing: -0.02em;
+		margin-bottom: 1.5rem;
+	}
+
+	.rule {
+		height: 2px;
+		background: var(--ink);
+	}
+
+	/* ── Sections ── */
+	.section {
+		margin-bottom: 4.5rem;
+	}
+
+	.section-label {
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		margin-bottom: 1.5rem;
+		padding-bottom: 0.5rem;
+		border-bottom: var(--rule);
+	}
+
+	/* ── Image grid ── */
+	.image-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+		gap: 1.5rem;
+	}
+
+	.img-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.img-card img {
+		display: block;
+		width: 100%;
+		aspect-ratio: 1;
+		object-fit: cover;
+		border: var(--rule);
+		transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+	}
+
+	.img-card:hover img {
+		transform: translateY(-4px);
+		box-shadow: 6px 6px 0 var(--accent);
+	}
+
+	figcaption {
+		font-size: 0.82rem;
+		color: #555;
+		line-height: 1.4;
+	}
+
+	/* ── Video list ── */
+	.video-list {
+		display: flex;
+		flex-direction: column;
+		gap: 2.5rem;
+	}
+
+	.video-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.video-wrap {
+		position: relative;
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		border: var(--rule);
+		overflow: hidden;
+		background: #f0f0f0;
+	}
+
+	.video-wrap iframe {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		border: none;
+	}
+
+	/* ── Empty state ── */
+	.empty-state {
+		padding: 5rem 0;
+		text-align: center;
+	}
+
+	.empty-text {
+		font-family: 'Fraunces', serif;
+		font-style: italic;
+		font-size: 1.5rem;
+		color: #aaa;
+	}
+</style>

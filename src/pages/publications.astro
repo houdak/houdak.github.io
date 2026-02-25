@@ -1,0 +1,233 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Authors strings support <strong> to bold your name.
+const publications = [
+	{
+		year: "2023",
+		title: "Excitation-transcription coupling, neuronal gene expression and synaptic plasticity",
+		authors: "Ma H, <strong>Khaled HG</strong>, Wang X, Mandelberg NJ, Cohen SM, He X, Tsien RW",
+		journal: "Nature Reviews Neuroscience",
+		journalDetail: "24(11): 672–692",
+		doi: "https://doi.org/10.1038/s41583-023-00742-5",
+		note: "Review",
+	},
+	{
+		year: "2023",
+		title: "Opto4E-BP, an optogenetic tool for inducible, reversible, and cell type-specific inhibition of translation initiation",
+		authors: "Alapin JM, Mohamed MS, Shrestha P, <strong>Khaled HG</strong>, Vorabyeva AG, Bowling HL, Oliveira MM, Klann E",
+		journal: "bioRxiv",
+		journalDetail: "",
+		doi: "https://doi.org/10.1101/2023.08.30.554643",
+		note: "Preprint",
+	},
+	{
+		year: "2021",
+		title: "A high-throughput screening to identify small molecules that suppress huntingtin promoter activity or activate huntingtin-antisense promoter activity",
+		authors: "<strong>Khaled HG</strong>, Feng H, Hu X, Sun X, Zheng W, Li PP, Rudnicki DD, Ye W, Chen YC, Southall N, Marugan J, Ross CA, Ferrer M, Henderson MJ, Margolis RL",
+		journal: "Scientific Reports",
+		journalDetail: "11: 6157",
+		doi: "https://doi.org/10.1038/s41598-021-85279-2",
+		note: "",
+	},
+	{
+		year: "2018",
+		title: "Excitatory and inhibitory synapse reorganization immediately after critical sensory experience in a vocal learner",
+		authors: "Huang Z, <strong>Khaled HG</strong>, Kirschmann M, Gobes SMH, Hahnloser RHR",
+		journal: "eLife",
+		journalDetail: "7: e37571",
+		doi: "https://doi.org/10.7554/eLife.37571",
+		note: "",
+	},
+];
+---
+
+<Layout title="Publications — Houda Khaled">
+	<main>
+		<header class="page-header">
+			<p class="eyebrow">Research</p>
+			<h1>Publications</h1>
+			<div class="rule"></div>
+		</header>
+
+		<section class="pub-list reveal">
+			{publications.map(pub => (
+				<article class="pub-entry">
+					<div class="pub-year">
+						<span>{pub.year}</span>
+						{pub.note && <span class="pub-note">{pub.note}</span>}
+					</div>
+					<div class="pub-body">
+						<p class="pub-title">{pub.title}</p>
+						<p class="pub-authors" set:html={pub.authors} />
+						<p class="pub-journal">
+							{pub.journal}{pub.journalDetail ? `. ${pub.journalDetail}` : ''}
+						</p>
+						{(pub.doi || pub.pdfUrl) && (
+							<div class="pub-links">
+								{pub.doi && (
+									<a href={pub.doi} target="_blank" rel="noopener noreferrer" class="pub-link">
+										DOI ↗
+									</a>
+								)}
+								{pub.pdfUrl && (
+									<a href={pub.pdfUrl} target="_blank" rel="noopener noreferrer" class="pub-link">
+										PDF ↗
+									</a>
+								)}
+							</div>
+						)}
+					</div>
+				</article>
+			))}
+		</section>
+	</main>
+</Layout>
+
+<script>
+	const reveals = document.querySelectorAll<HTMLElement>('.reveal');
+	const io = new IntersectionObserver((entries) => {
+		entries.forEach(e => {
+			if (e.isIntersecting) {
+				(e.target as HTMLElement).classList.add('in-view');
+				io.unobserve(e.target);
+			}
+		});
+	}, { threshold: 0.05 });
+	reveals.forEach(el => io.observe(el));
+</script>
+
+<style>
+	main {
+		max-width: 860px;
+		margin: 0 auto;
+		padding: 3rem 1.5rem 6rem;
+	}
+
+	/* ── Page header ── */
+	.page-header {
+		margin-bottom: 4rem;
+	}
+
+	.eyebrow {
+		font-size: 0.78rem;
+		font-weight: 500;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		margin-bottom: 0.5rem;
+		opacity: 0.55;
+	}
+
+	h1 {
+		font-family: 'Fraunces', serif;
+		font-style: italic;
+		font-size: clamp(3rem, 10vw, 5.5rem);
+		line-height: 1;
+		letter-spacing: -0.02em;
+		margin-bottom: 1.5rem;
+	}
+
+	.rule {
+		height: 2px;
+		background: var(--ink);
+	}
+
+	/* ── Publication list ── */
+	.pub-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.pub-entry {
+		display: grid;
+		grid-template-columns: 5rem 1fr;
+		gap: 2rem;
+		padding: 2rem 0;
+		border-bottom: 1px solid #e0e0e0;
+	}
+
+	.pub-entry:last-child {
+		border-bottom: none;
+	}
+
+	@media (max-width: 600px) {
+		.pub-entry {
+			grid-template-columns: 1fr;
+			gap: 0.5rem;
+		}
+	}
+
+	/* ── Year column ── */
+	.pub-year {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		padding-top: 0.15rem;
+	}
+
+	.pub-year span:first-child {
+		font-family: 'Fraunces', serif;
+		font-style: italic;
+		font-size: 1.4rem;
+		line-height: 1;
+		color: var(--ink);
+	}
+
+	.pub-note {
+		font-size: 0.68rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		background: var(--accent);
+		color: var(--ink);
+		padding: 0.15rem 0.45rem;
+		width: fit-content;
+	}
+
+	/* ── Body column ── */
+	.pub-title {
+		font-weight: 500;
+		font-size: 1.05rem;
+		line-height: 1.4;
+		margin-bottom: 0.35rem;
+	}
+
+	.pub-authors {
+		font-size: 0.88rem;
+		color: #444;
+		margin-bottom: 0.25rem;
+	}
+
+	.pub-authors :global(strong) {
+		color: var(--ink);
+		font-weight: 700;
+	}
+
+	.pub-journal {
+		font-size: 0.88rem;
+		font-style: italic;
+		color: #666;
+		margin-bottom: 0.75rem;
+	}
+
+	.pub-links {
+		display: flex;
+		gap: 1rem;
+	}
+
+	.pub-link {
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.07em;
+		text-transform: uppercase;
+		text-decoration: none;
+		border-bottom: 2px solid var(--accent);
+		padding-bottom: 1px;
+		transition: color 0.2s, border-color 0.2s;
+	}
+
+	.pub-link:hover {
+		color: #444;
+	}
+</style>
