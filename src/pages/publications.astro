@@ -115,7 +115,7 @@ const publications = [
 		letter-spacing: 0.12em;
 		text-transform: uppercase;
 		margin-bottom: 0.5rem;
-		opacity: 0.55;
+		opacity: 0.45;
 	}
 
 	h1 {
@@ -128,8 +128,8 @@ const publications = [
 	}
 
 	.rule {
-		height: 2px;
-		background: var(--ink);
+		height: 1px;
+		background: linear-gradient(to right, var(--accent), var(--ink-dim) 60%, transparent);
 	}
 
 	/* ── Publication list ── */
@@ -144,7 +144,7 @@ const publications = [
 		grid-template-columns: 5rem 1fr;
 		gap: 2rem;
 		padding: 2rem 0;
-		border-bottom: 1px solid #e0e0e0;
+		border-bottom: 1px solid var(--ink-dim);
 	}
 
 	.pub-entry:last-child {
@@ -171,7 +171,7 @@ const publications = [
 		font-style: italic;
 		font-size: 1.4rem;
 		line-height: 1;
-		color: var(--ink);
+		color: var(--accent);
 	}
 
 	.pub-note {
@@ -180,7 +180,7 @@ const publications = [
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		background: var(--accent);
-		color: var(--ink);
+		color: #0a0a0a;
 		padding: 0.15rem 0.45rem;
 		width: fit-content;
 	}
@@ -195,7 +195,7 @@ const publications = [
 
 	.pub-authors {
 		font-size: 0.88rem;
-		color: #444;
+		color: var(--ink-muted);
 		margin-bottom: 0.25rem;
 	}
 
@@ -207,7 +207,7 @@ const publications = [
 	.pub-journal {
 		font-size: 0.88rem;
 		font-style: italic;
-		color: #666;
+		color: var(--ink-muted);
 		margin-bottom: 0.75rem;
 	}
 
@@ -222,12 +222,13 @@ const publications = [
 		letter-spacing: 0.07em;
 		text-transform: uppercase;
 		text-decoration: none;
+		color: var(--ink);
 		border-bottom: 2px solid var(--accent);
 		padding-bottom: 1px;
-		transition: color 0.2s, border-color 0.2s;
+		transition: color 0.2s;
 	}
 
 	.pub-link:hover {
-		color: #444;
+		color: var(--accent);
 	}
 </style>

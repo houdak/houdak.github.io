@@ -118,8 +118,8 @@ const hasVideos = videos.length > 0;
 	}
 
 	.rule {
-		height: 2px;
-		background: var(--ink);
+		height: 1px;
+		background: linear-gradient(to right, var(--accent), var(--ink-dim) 60%, transparent);
 	}
 
 	/* ── Sections ── */
@@ -166,7 +166,7 @@ const hasVideos = videos.length > 0;
 
 	figcaption {
 		font-size: 0.82rem;
-		color: #555;
+		color: var(--ink-muted);
 		line-height: 1.4;
 	}
 
@@ -189,7 +189,7 @@ const hasVideos = videos.length > 0;
 		aspect-ratio: 16 / 9;
 		border: var(--rule);
 		overflow: hidden;
-		background: #f0f0f0;
+		background: var(--bg-2);
 	}
 
 	.video-wrap iframe {
@@ -210,6 +210,6 @@ const hasVideos = videos.length > 0;
 		font-family: 'Fraunces', serif;
 		font-style: italic;
 		font-size: 1.5rem;
-		color: #aaa;
+		color: var(--ink-dim);
 	}
 </style>
