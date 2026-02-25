@@ -1,0 +1,354 @@
+---
+const firstName = "Houda";
+const lastName = "Khaled";
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Houda Khaled</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,144,900&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+	</head>
+	<body>
+		<main>
+
+			<header>
+				<p class="eyebrow">Neuroscience PhD Candidate &middot; NYU</p>
+				<h1>
+					<span class="name-row">
+						{firstName.split('').map((char, i) => (
+							<span class="char" style={`--d: ${i * 0.06}s`}>{char}</span>
+						))}
+					</span>
+					<span class="name-row">
+						{lastName.split('').map((char, i) => (
+							<span class="char" style={`--d: ${(i + firstName.length + 1) * 0.06}s`}>{char}</span>
+						))}
+					</span>
+				</h1>
+				<div class="rule"></div>
+			</header>
+
+			<div class="ticker-wrap" aria-hidden="true">
+				<div class="ticker">
+					{[0, 1].map(() => (
+						<span class="ticker-track">
+							Synapses &nbsp;&middot;&nbsp; Learning &amp; Memory &nbsp;&middot;&nbsp; Huntington&rsquo;s Disease &nbsp;&middot;&nbsp; Zebra Finch &nbsp;&middot;&nbsp; Frivolous Science &nbsp;&middot;&nbsp; Foster Cats &nbsp;&middot;&nbsp; Queens, NY &nbsp;&middot;&nbsp; Molecular Signaling &nbsp;&middot;&nbsp; Neural Plasticity &nbsp;&middot;&nbsp;
+						</span>
+					))}
+				</div>
+			</div>
+
+			<section id="about" class="reveal">
+				<div class="about-grid">
+					<div class="photo-wrap">
+						<img src="/houda.jpg" alt="Houda Khaled" />
+					</div>
+					<div class="bio">
+						<p>
+							I&rsquo;m a PhD candidate in the lab of <a href="https://med.nyu.edu/faculty/richard-w-tsien" target="_blank" rel="noopener noreferrer">Dr. Richard Tsien</a> at New York University, studying the basics of how we learn. My thesis investigates when and where molecular signals trigger changes in neuronal synapses that underlie learning and memory.
+						</p>
+						<p>
+							Previously, I worked on a small molecule therapeutic screen for Huntington&rsquo;s Disease and studied structural plasticity of synapses in zebra finch brains as the birds learn to sing.
+						</p>
+						<p>
+							I also host <a href="https://linktr.ee/frivolousscience" target="_blank" rel="noopener noreferrer"><strong>Frivolous Science</strong></a>, a podcast where I interview scientists conducting unconventional research.
+						</p>
+						<p>
+							I live in Queens, often accompanied by foster cats.
+						</p>
+					</div>
+				</div>
+			</section>
+
+			<section id="links" class="reveal">
+				<a class="pill" href="https://linktr.ee/frivolousscience" target="_blank" rel="noopener noreferrer">
+					<span class="pill-tag">Podcast</span>
+					<span class="pill-text">Frivolous Science</span>
+				</a>
+				<a class="pill" href="https://www.linkedin.com/in/houda-khaled/" target="_blank" rel="noopener noreferrer">
+					<span class="pill-tag">LinkedIn</span>
+					<span class="pill-text">Houda Khaled</span>
+				</a>
+			</section>
+
+		</main>
+
+		<script>
+			const reveals = document.querySelectorAll<HTMLElement>('.reveal');
+			const io = new IntersectionObserver((entries) => {
+				entries.forEach(e => {
+					if (e.isIntersecting) {
+						(e.target as HTMLElement).classList.add('in-view');
+						io.unobserve(e.target);
+					}
+				});
+			}, { threshold: 0.12 });
+			reveals.forEach(el => io.observe(el));
+		</script>
+	</body>
+</html>
+
+<style>
+	/* ── Tokens ── */
+	:root {
+		--accent: #a8ff3e;
+		--ink: #0a0a0a;
+		--bg: #ffffff;
+		--rule: 2px solid var(--ink);
+	}
+
+	*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+	body {
+		background: var(--bg);
+		color: var(--ink);
+		font-family: 'DM Sans', sans-serif;
+		font-size: 1.05rem;
+		line-height: 1.7;
+		overflow-x: hidden;
+	}
+
+	main {
+		max-width: 860px;
+		margin: 0 auto;
+		padding: 3.5rem 1.5rem 6rem;
+	}
+
+	/* ── Header ── */
+	header {
+		margin-bottom: 0;
+	}
+
+	.eyebrow {
+		font-size: 0.78rem;
+		font-weight: 500;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--ink);
+		opacity: 0;
+		animation: fadeUp 0.6s ease forwards;
+		margin-bottom: 0.75rem;
+	}
+
+	h1 {
+		font-family: 'Fraunces', serif;
+		font-style: italic;
+		font-size: clamp(5.5rem, 16vw, 11rem);
+		line-height: 0.92;
+		letter-spacing: -0.02em;
+		margin-bottom: 1.5rem;
+	}
+
+	.name-row {
+		display: block;
+		overflow: hidden;
+	}
+
+	.char {
+		display: inline-block;
+		opacity: 0;
+		transform: translateY(60px) rotate(3deg);
+		animation: charIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+		animation-delay: var(--d, 0s);
+	}
+
+	@keyframes charIn {
+		to { opacity: 1; transform: translateY(0) rotate(0deg); }
+	}
+
+	@keyframes fadeUp {
+		to { opacity: 1; }
+	}
+
+	.rule {
+		height: 2px;
+		background: var(--ink);
+		transform-origin: left center;
+		transform: scaleX(0);
+		animation: ruleGrow 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
+		margin-top: 2rem;
+	}
+
+	@keyframes ruleGrow {
+		to { transform: scaleX(1); }
+	}
+
+	/* ── Ticker ── */
+	.ticker-wrap {
+		overflow: hidden;
+		background: var(--ink);
+		color: var(--bg);
+		padding: 0.7rem 0;
+		margin: 2.5rem -1.5rem;
+		user-select: none;
+	}
+
+	.ticker {
+		display: flex;
+		white-space: nowrap;
+		animation: ticker 22s linear infinite;
+	}
+
+	.ticker-track {
+		flex-shrink: 0;
+		font-size: 0.8rem;
+		font-weight: 500;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		padding-right: 0;
+	}
+
+	.ticker-track strong, .ticker-track b {
+		color: var(--accent);
+	}
+
+	@keyframes ticker {
+		from { transform: translateX(0); }
+		to   { transform: translateX(-50%); }
+	}
+
+	/* ── Scroll reveal ── */
+	.reveal {
+		opacity: 0;
+		transform: translateY(36px);
+		transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.reveal.in-view {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	/* ── About ── */
+	#about {
+		margin-top: 4rem;
+	}
+
+	.about-grid {
+		display: grid;
+		grid-template-columns: 260px 1fr;
+		gap: 3.5rem;
+		align-items: start;
+	}
+
+	@media (max-width: 600px) {
+		.about-grid {
+			grid-template-columns: 1fr;
+			gap: 2rem;
+		}
+	}
+
+	.photo-wrap {
+		position: relative;
+	}
+
+	.photo-wrap img {
+		display: block;
+		width: 100%;
+		aspect-ratio: 1;
+		object-fit: cover;
+		position: relative;
+		z-index: 1;
+		border: var(--rule);
+		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.photo-wrap::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--accent);
+		transform: translate(10px, 10px);
+		z-index: 0;
+		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.photo-wrap:hover img {
+		transform: translate(-4px, -4px);
+	}
+
+	.photo-wrap:hover::after {
+		transform: translate(14px, 14px);
+	}
+
+	.bio p {
+		margin-bottom: 1.1rem;
+	}
+
+	.bio p:last-child { margin-bottom: 0; }
+
+	a {
+		color: var(--ink);
+		text-decoration: underline;
+		text-decoration-color: var(--accent);
+		text-underline-offset: 3px;
+		text-decoration-thickness: 2px;
+		transition: color 0.2s;
+	}
+
+	a:hover { color: #444; }
+
+	/* ── Links ── */
+	#links {
+		margin-top: 3.5rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+	}
+
+	.pill {
+		position: relative;
+		overflow: hidden;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.75rem;
+		border: var(--rule);
+		padding: 0.6rem 1.4rem 0.6rem 0.6rem;
+		text-decoration: none;
+		color: var(--ink);
+		font-weight: 500;
+		font-size: 0.95rem;
+		transition: color 0.3s;
+	}
+
+	.pill::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--ink);
+		transform: translateX(-101%);
+		transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+		z-index: 0;
+	}
+
+	.pill:hover::before { transform: translateX(0); }
+	.pill:hover { color: var(--accent); }
+
+	.pill-tag, .pill-text {
+		position: relative;
+		z-index: 1;
+	}
+
+	.pill-tag {
+		background: var(--accent);
+		color: var(--ink);
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.07em;
+		text-transform: uppercase;
+		padding: 0.2rem 0.55rem;
+		transition: background 0.3s, color 0.3s;
+	}
+
+	.pill:hover .pill-tag {
+		background: var(--accent);
+		color: var(--ink);
+	}
+</style>
