@@ -68,7 +68,13 @@ const hasVideos = videos.length > 0;
 
 		{!hasImages && !hasVideos && (
 			<section class="empty-state reveal">
+				<div class="empty-reticle" aria-hidden="true">
+					<div class="reticle-ring"></div>
+					<div class="reticle-cross h"></div>
+					<div class="reticle-cross v"></div>
+				</div>
 				<p class="empty-text">Images and videos coming soon.</p>
+				<p class="empty-meta">No signal detected · Awaiting acquisition</p>
 			</section>
 		)}
 	</main>
@@ -89,52 +95,69 @@ const hasVideos = videos.length > 0;
 
 <style>
 	main {
-		max-width: 860px;
+		position: relative;
+		z-index: 1;
+		max-width: 900px;
 		margin: 0 auto;
-		padding: 3rem 1.5rem 6rem;
+		padding: 3rem 1.5rem 7rem;
 	}
 
 	/* ── Page header ── */
-	.page-header {
-		margin-bottom: 4rem;
-	}
+	.page-header { margin-bottom: 4rem; }
 
 	.eyebrow {
-		font-size: 0.78rem;
-		font-weight: 500;
-		letter-spacing: 0.12em;
+		font-family: 'Space Mono', monospace;
+		font-size: 0.68rem;
+		letter-spacing: 0.14em;
 		text-transform: uppercase;
-		margin-bottom: 0.5rem;
-		opacity: 0.55;
+		color: var(--ink-muted);
+		margin-bottom: 0.6rem;
 	}
 
 	h1 {
-		font-family: 'Fraunces', serif;
-		font-style: italic;
+		font-family: 'Space Grotesk', sans-serif;
+		font-weight: 700;
 		font-size: clamp(3rem, 10vw, 5.5rem);
-		line-height: 1;
-		letter-spacing: -0.02em;
+		line-height: 0.95;
+		letter-spacing: -0.03em;
 		margin-bottom: 1.5rem;
+		color: var(--ink);
+		text-shadow:
+			0 0 50px rgba(0,255,239,0.2),
+			0 0 120px rgba(0,255,239,0.07);
 	}
 
 	.rule {
 		height: 1px;
-		background: linear-gradient(to right, var(--accent), var(--ink-dim) 60%, transparent);
+		background: linear-gradient(to right, var(--cfp), var(--ink-dim) 55%, transparent);
 	}
 
 	/* ── Sections ── */
-	.section {
-		margin-bottom: 4.5rem;
-	}
+	.section { margin-bottom: 4.5rem; }
 
 	.section-label {
-		font-size: 0.78rem;
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+		font-family: 'Space Mono', monospace;
+		font-size: 0.68rem;
 		font-weight: 700;
-		letter-spacing: 0.12em;
+		letter-spacing: 0.14em;
 		text-transform: uppercase;
+		color: var(--cfp);
 		margin-bottom: 1.5rem;
-		padding-bottom: 0.5rem;
-		border-bottom: var(--rule);
+		padding-bottom: 0.6rem;
+		border-bottom: 1px solid var(--ink-dim);
+	}
+	.section-label::before {
+		content: '';
+		display: inline-block;
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: var(--cfp);
+		box-shadow: 0 0 8px var(--cfp), 0 0 18px rgba(0,255,239,0.45);
+		flex-shrink: 0;
 	}
 
 	/* ── Image grid ── */
@@ -148,6 +171,7 @@ const hasVideos = videos.length > 0;
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
+		cursor: crosshair;
 	}
 
 	.img-card img {
@@ -155,41 +179,41 @@ const hasVideos = videos.length > 0;
 		width: 100%;
 		aspect-ratio: 1;
 		object-fit: cover;
-		border: var(--rule);
-		transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+		border: 1px solid var(--ink-dim);
+		transition: box-shadow 0.4s ease, border-color 0.4s ease;
 	}
 
 	.img-card:hover img {
-		transform: translateY(-4px);
-		box-shadow: 6px 6px 0 var(--accent);
+		border-color: rgba(0,255,239,0.4);
+		box-shadow:
+			0 0 20px rgba(0,255,239,0.25),
+			0 0 50px rgba(0,255,239,0.08);
 	}
 
 	figcaption {
-		font-size: 0.82rem;
+		font-family: 'Space Mono', monospace;
+		font-size: 0.65rem;
 		color: var(--ink-muted);
-		line-height: 1.4;
+		line-height: 1.45;
 	}
 
 	/* ── Video list ── */
-	.video-list {
-		display: flex;
-		flex-direction: column;
-		gap: 2.5rem;
-	}
+	.video-list { display: flex; flex-direction: column; gap: 2.5rem; }
 
-	.video-card {
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-	}
+	.video-card { display: flex; flex-direction: column; gap: 0.75rem; }
 
 	.video-wrap {
 		position: relative;
 		width: 100%;
 		aspect-ratio: 16 / 9;
-		border: var(--rule);
+		border: 1px solid var(--ink-dim);
 		overflow: hidden;
 		background: var(--bg-2);
+		transition: border-color 0.3s, box-shadow 0.3s;
+	}
+	.video-wrap:hover {
+		border-color: rgba(0,255,239,0.35);
+		box-shadow: 0 0 25px rgba(0,255,239,0.1);
 	}
 
 	.video-wrap iframe {
@@ -200,16 +224,56 @@ const hasVideos = videos.length > 0;
 		border: none;
 	}
 
-	/* ── Empty state ── */
+	/* ── Empty state — microscope reticle ── */
 	.empty-state {
 		padding: 5rem 0;
-		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1.5rem;
+	}
+
+	.empty-reticle {
+		position: relative;
+		width: 80px;
+		height: 80px;
+		opacity: 0.3;
+	}
+
+	.reticle-ring {
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+		border: 1px solid var(--cfp);
+		box-shadow: 0 0 10px rgba(0,255,239,0.3);
+	}
+
+	.reticle-cross {
+		position: absolute;
+		background: var(--cfp);
+	}
+	.reticle-cross.h {
+		width: 100%; height: 1px;
+		top: 50%; left: 0;
+	}
+	.reticle-cross.v {
+		width: 1px; height: 100%;
+		left: 50%; top: 0;
 	}
 
 	.empty-text {
-		font-family: 'Fraunces', serif;
-		font-style: italic;
-		font-size: 1.5rem;
-		color: var(--ink-dim);
+		font-family: 'Space Grotesk', sans-serif;
+		font-size: 1.2rem;
+		font-weight: 500;
+		color: var(--ink-muted);
+	}
+
+	.empty-meta {
+		font-family: 'Space Mono', monospace;
+		font-size: 0.65rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--ink-muted);
+		opacity: 0.5;
 	}
 </style>

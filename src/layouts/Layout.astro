@@ -1,4 +1,6 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
+
 interface Props {
 	title?: string;
 }
@@ -15,61 +17,96 @@ const path = Astro.url.pathname;
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<ViewTransitions />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,144,900&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
 	</head>
 	<body>
+		<!-- Scattered fluorescent cells in the field of view -->
+		<div class="cell-field" aria-hidden="true">
+			<span></span>
+			<span></span>
+			<span></span>
+			<span></span>
+			<span></span>
+			<span></span>
+		</div>
+
 		<nav>
 			<a href="/" class="nav-logo" aria-label="Home">HK</a>
 			<div class="nav-links">
-				<a href="/publications" class:list={[{ active: path.startsWith('/publications') }]}>Publications</a>
-				<a href="/gallery" class:list={[{ active: path.startsWith('/gallery') }]}>Gallery</a>
+				<a href="/publications" class:list={[{ active: path.startsWith('/publications') }]}>
+					<span class="ch-dot mcherry"></span>Publications
+				</a>
+				<a href="/gallery" class:list={[{ active: path.startsWith('/gallery') }]}>
+					<span class="ch-dot cfp"></span>Gallery
+				</a>
 			</div>
 		</nav>
 
 		<slot />
+
+		<!-- Decorative scale bar like a real micrograph -->
+		<div class="scalebar" aria-hidden="true">
+			<div class="scalebar-rule"></div>
+			<span>10 μm</span>
+		</div>
 	</body>
 </html>
 
 <style is:global>
-	/* ── Tokens ── */
+	/* ── Fluorophore color tokens ── */
 	:root {
-		--accent:    #a8ff3e;   /* GFP green */
-		--accent-2:  #ff6fff;   /* mCherry magenta */
-		--accent-3:  #38c8ff;   /* CFP cyan */
-		--ink:       #e8eaf0;
-		--ink-muted: #7a8099;
-		--ink-dim:   #3a3f52;
-		--bg:        #0d0f14;
-		--bg-2:      #131720;
+		--gfp:      #39ff14;   /* GFP green */
+		--mcherry:  #ff3d9a;   /* mCherry */
+		--cfp:      #00ffef;   /* CFP / EGFP cyan */
+		--dapi:     #6080ff;   /* DAPI blue */
+		--yfp:      #d4ff00;   /* YFP */
+
+		/* Legacy aliases */
+		--accent:   var(--gfp);
+		--accent-2: var(--mcherry);
+		--accent-3: var(--cfp);
+
+		--ink:       #dde8f2;
+		--ink-muted: #4e5e72;
+		--ink-dim:   #141b26;
+		--bg:        #020407;
+		--bg-2:      #070a0f;
 		--rule:      1px solid var(--ink-dim);
 	}
 
+	/* ── Page transition ── */
+	::view-transition-old(root) {
+		animation-duration: 0.5s;
+		animation-timing-function: ease;
+	}
+	::view-transition-new(root) {
+		animation-duration: 0.5s;
+		animation-timing-function: ease;
+	}
+
 	*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+	html { scroll-behavior: smooth; }
 
 	body {
 		background-color: var(--bg);
-		background-image: radial-gradient(
-			ellipse 80% 60% at 50% -10%,
-			rgba(168, 255, 62, 0.07) 0%,
-			transparent 70%
-		);
 		color: var(--ink);
-		font-family: 'DM Sans', sans-serif;
+		font-family: 'Space Grotesk', sans-serif;
 		font-size: 1.05rem;
 		line-height: 1.7;
 		overflow-x: hidden;
 	}
 
-	/* Subtle film-grain texture overlay */
+	/* Film-grain texture overlay */
 	body::before {
 		content: '';
 		position: fixed;
 		inset: 0;
 		pointer-events: none;
 		z-index: 9999;
-		opacity: 0.03;
+		opacity: 0.045;
 		background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 		background-repeat: repeat;
 		background-size: 128px 128px;
@@ -78,21 +115,19 @@ const path = Astro.url.pathname;
 	a {
 		color: var(--ink);
 		text-decoration: underline;
-		text-decoration-color: var(--accent);
+		text-decoration-color: rgba(57, 255, 20, 0.35);
 		text-underline-offset: 3px;
-		text-decoration-thickness: 2px;
+		text-decoration-thickness: 1px;
 		transition: color 0.2s;
 	}
+	a:hover { color: var(--gfp); }
 
-	a:hover { color: var(--accent); }
-
-	/* ── Scroll reveal (reusable utility) ── */
+	/* ── Scroll reveal ── */
 	.reveal {
 		opacity: 0;
-		transform: translateY(36px);
-		transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+		transform: translateY(28px);
+		transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 	}
-
 	.reveal.in-view {
 		opacity: 1;
 		transform: translateY(0);
@@ -100,47 +135,176 @@ const path = Astro.url.pathname;
 </style>
 
 <style>
+	/* ── Fluorescent cell field ── */
+	.cell-field {
+		position: fixed;
+		inset: 0;
+		pointer-events: none;
+		z-index: 0;
+		overflow: hidden;
+		/* Static scatter: small glowing dots like fluorescent particles */
+		background:
+			radial-gradient(circle 28px at  6%  9%,  rgba(57,255,20,0.22)   0%, transparent 100%),
+			radial-gradient(circle 16px at 14% 78%,  rgba(57,255,20,0.16)   0%, transparent 100%),
+			radial-gradient(circle 24px at 94%  6%,  rgba(255,61,154,0.22)  0%, transparent 100%),
+			radial-gradient(circle 14px at 87% 84%,  rgba(255,61,154,0.16)  0%, transparent 100%),
+			radial-gradient(circle 20px at 72% 38%,  rgba(0,255,239,0.22)   0%, transparent 100%),
+			radial-gradient(circle 11px at 63% 92%,  rgba(0,255,239,0.16)   0%, transparent 100%),
+			radial-gradient(circle 26px at 48% 18%,  rgba(96,128,255,0.20)  0%, transparent 100%),
+			radial-gradient(circle 18px at 32% 63%,  rgba(212,255,0,0.18)   0%, transparent 100%),
+			radial-gradient(circle 15px at 82% 54%,  rgba(57,255,20,0.16)   0%, transparent 100%),
+			radial-gradient(circle 10px at 55% 73%,  rgba(96,128,255,0.20)  0%, transparent 100%),
+			radial-gradient(circle 21px at 38% 28%,  rgba(0,255,239,0.14)   0%, transparent 100%),
+			radial-gradient(circle  9px at 79% 14%,  rgba(212,255,0,0.20)   0%, transparent 100%),
+			radial-gradient(circle 33px at 23% 96%,  rgba(57,255,20,0.10)   0%, transparent 100%),
+			radial-gradient(circle 17px at 96% 48%,  rgba(255,61,154,0.14)  0%, transparent 100%),
+			radial-gradient(circle 13px at 44% 50%,  rgba(57,255,20,0.12)   0%, transparent 100%),
+			radial-gradient(circle  8px at 70% 67%,  rgba(255,61,154,0.18)  0%, transparent 100%),
+			radial-gradient(circle 19px at 58%  4%,  rgba(0,255,239,0.14)   0%, transparent 100%),
+			radial-gradient(circle 11px at  2% 55%,  rgba(212,255,0,0.16)   0%, transparent 100%);
+	}
+
+	/* Animated pulsing cells — positioned at the periphery */
+	.cell-field span {
+		position: absolute;
+		border-radius: 50%;
+		will-change: transform, opacity;
+	}
+	.cell-field span:nth-child(1) {
+		width: 58px; height: 58px;
+		top: 8%; left: 3%;
+		background: radial-gradient(circle, rgba(57,255,20,0.55) 15%, rgba(57,255,20,0.10) 60%, transparent 100%);
+		animation: cellPulse 3.8s ease-in-out infinite;
+	}
+	.cell-field span:nth-child(2) {
+		width: 50px; height: 50px;
+		top: 4%; left: 94%;
+		background: radial-gradient(circle, rgba(255,61,154,0.55) 15%, rgba(255,61,154,0.10) 60%, transparent 100%);
+		animation: cellPulse 5.1s ease-in-out 1.2s infinite;
+	}
+	.cell-field span:nth-child(3) {
+		width: 40px; height: 40px;
+		top: 40%; left: 97%;
+		background: radial-gradient(circle, rgba(0,255,239,0.55) 15%, rgba(0,255,239,0.10) 60%, transparent 100%);
+		animation: cellPulse 4.3s ease-in-out 0.7s infinite;
+	}
+	.cell-field span:nth-child(4) {
+		width: 66px; height: 66px;
+		top: 65%; left: 1%;
+		background: radial-gradient(circle, rgba(96,128,255,0.45) 15%, rgba(96,128,255,0.08) 60%, transparent 100%);
+		animation: cellPulse 6.2s ease-in-out 2.1s infinite;
+	}
+	.cell-field span:nth-child(5) {
+		width: 34px; height: 34px;
+		top: 88%; left: 18%;
+		background: radial-gradient(circle, rgba(57,255,20,0.50) 15%, rgba(57,255,20,0.08) 60%, transparent 100%);
+		animation: cellPulse 4.7s ease-in-out 1.8s infinite;
+	}
+	.cell-field span:nth-child(6) {
+		width: 52px; height: 52px;
+		top: 74%; left: 90%;
+		background: radial-gradient(circle, rgba(212,255,0,0.50) 15%, rgba(212,255,0,0.08) 60%, transparent 100%);
+		animation: cellPulse 5.5s ease-in-out 3.3s infinite;
+	}
+	@keyframes cellPulse {
+		0%, 100% { opacity: 0.3; transform: scale(0.88); }
+		50%       { opacity: 1;   transform: scale(1.12); }
+	}
+
+	/* ── Navigation ── */
 	nav {
+		position: relative;
+		z-index: 10;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		max-width: 860px;
+		max-width: 900px;
 		margin: 0 auto;
-		padding: 1.5rem 1.5rem 0;
+		padding: 1.75rem 1.5rem 0;
 	}
 
 	.nav-logo {
-		font-family: 'Fraunces', serif;
-		font-style: italic;
-		font-size: 1.8rem;
+		font-family: 'Space Grotesk', sans-serif;
+		font-weight: 700;
+		font-size: 1.55rem;
+		letter-spacing: -0.02em;
 		line-height: 1;
 		text-decoration: none;
-		color: var(--ink);
-		transition: color 0.2s;
+		color: var(--gfp);
+		text-shadow:
+			0 0 18px rgba(57,255,20,0.6),
+			0 0 45px rgba(57,255,20,0.22);
+		transition: text-shadow 0.3s;
 	}
-
-	.nav-logo:hover { color: var(--accent); }
+	.nav-logo:hover {
+		color: var(--gfp);
+		text-shadow:
+			0 0 28px rgba(57,255,20,0.9),
+			0 0 65px rgba(57,255,20,0.38);
+	}
 
 	.nav-links {
 		display: flex;
 		gap: 2rem;
 	}
-
 	.nav-links a {
-		font-size: 0.78rem;
-		font-weight: 500;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		font-family: 'Space Mono', monospace;
+		font-size: 0.7rem;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
 		text-decoration: none;
 		color: var(--ink-muted);
-		padding-bottom: 3px;
-		border-bottom: 2px solid transparent;
-		transition: border-color 0.2s, color 0.2s;
+		transition: color 0.2s;
+	}
+	.nav-links a:hover,
+	.nav-links a.active { color: var(--ink); }
+
+	/* Channel indicator dots */
+	.ch-dot {
+		display: inline-block;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		flex-shrink: 0;
+	}
+	.ch-dot.mcherry {
+		background: var(--mcherry);
+		box-shadow: 0 0 6px var(--mcherry), 0 0 14px rgba(255,61,154,0.5);
+	}
+	.ch-dot.cfp {
+		background: var(--cfp);
+		box-shadow: 0 0 6px var(--cfp), 0 0 14px rgba(0,255,239,0.5);
 	}
 
-	.nav-links a:hover,
-	.nav-links a.active {
-		border-color: var(--accent);
+	/* ── Scale bar (micrograph decoration) ── */
+	.scalebar {
+		position: fixed;
+		bottom: 1.4rem;
+		right: 1.6rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 4px;
+		opacity: 0.28;
+		pointer-events: none;
+		z-index: 100;
+		transition: opacity 0.3s;
+	}
+	.scalebar:hover { opacity: 0.65; }
+	.scalebar-rule {
+		width: 56px;
+		height: 2px;
+		background: var(--ink);
+		border-left:  2px solid var(--ink);
+		border-right: 2px solid var(--ink);
+	}
+	.scalebar span {
+		font-family: 'Space Mono', monospace;
+		font-size: 0.58rem;
+		letter-spacing: 0.06em;
 		color: var(--ink);
 	}
 </style>
