@@ -24,6 +24,8 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - name: Fetch podcast RSS
+        run: curl -s -A "Mozilla/5.0" "https://frivolousscience.substack.com/feed" -o src/data/podcast.xml || true
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
