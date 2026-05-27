@@ -11,7 +11,9 @@ let podcastDescription = '';
 let episodes: Episode[] = [];
 
 try {
-	const xml = await fetch('https://frivolousscience.substack.com/feed').then(r => r.text());
+	const xml = await fetch('https://frivolousscience.substack.com/feed', {
+		headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AstroBot/1.0)' }
+	}).then(r => r.text());
 	const channelPart = xml.split('<item>')[0];
 
 	// Cover art: extract original high-res URL embedded inside the CDN URL
