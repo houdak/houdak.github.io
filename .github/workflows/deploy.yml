@@ -24,11 +24,6 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - name: Fetch podcast RSS
-        run: |
-          curl -s -A "Mozilla/5.0" "https://frivolousscience.substack.com/feed" -o src/data/podcast.xml
-          echo "File size: $(wc -c < src/data/podcast.xml) bytes"
-          echo "First 200 chars: $(head -c 200 src/data/podcast.xml)"
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -1,49 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { readFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import podcastData from '../data/podcast.json';
 const firstName = "Houda";
 const lastName = "Khaled";
 
-// Fetch podcast data from public Substack RSS feed at build time
 interface Episode { title: string; link: string; date: string; desc: string; }
-
-let podcastCover = '';
-let podcastDescription = '';
-let episodes: Episode[] = [];
-
-try {
-	const xmlPath = join(process.cwd(), 'src/data/podcast.xml');
-	console.log('[podcast] cwd:', process.cwd());
-	console.log('[podcast] xmlPath:', xmlPath);
-	console.log('[podcast] file exists:', existsSync(xmlPath));
-	const xml = existsSync(xmlPath)
-		? readFileSync(xmlPath, 'utf-8')
-		: await fetch('https://frivolousscience.substack.com/feed', {
-			headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AstroBot/1.0)' }
-		}).then(r => r.text());
-	console.log('[podcast] xml length:', xml.length);
-	const channelPart = xml.split('<item>')[0];
-
-	// Cover art: extract original high-res URL embedded inside the CDN URL
-	const cdnUrl = (channelPart.match(/<image>[\s\S]*?<url>([\s\S]*?)<\/url>/) || [])[1] ?? '';
-	const encodedOriginal = cdnUrl.match(/https%3A%2F%2F.+$/)?.[0] ?? '';
-	podcastCover = encodedOriginal ? decodeURIComponent(encodedOriginal) : cdnUrl;
-
-	// Description
-	podcastDescription = (channelPart.match(/<description><!\[CDATA\[(.*?)\]\]><\/description>/) || [])[1] ?? '';
-
-	// Episodes
-	episodes = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map(m => {
-		const item = m[1];
-		return {
-			title: (item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/) || [])[1] ?? '',
-			link:  (item.match(/<link>(.*?)<\/link>/) || [])[1] ?? '',
-			date:  (item.match(/<pubDate>(.*?)<\/pubDate>/) || [])[1] ?? '',
-			desc:  (item.match(/<description><!\[CDATA\[(.*?)\]\]><\/description>/) || [])[1] ?? '',
-		};
-	}).filter(ep => !ep.title.toLowerCase().includes('coming soon')).slice(0, 6);
-} catch { /* silently fall back */ }
+const podcastCover: string = podcastData.cover;
+const podcastDescription: string = podcastData.description;
+const episodes: Episode[] = podcastData.episodes;
 
 function fmtDate(s: string) {
 	try { return new Date(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
