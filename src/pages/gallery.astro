@@ -7,10 +7,23 @@ import Layout from '../layouts/Layout.astro';
 const images: { src: string; alt: string; caption?: string }[] = [
 	// { src: "/microscopy-1.jpg", alt: "Confocal image of hippocampal neurons", caption: "CA1 pyramidal neurons, mouse hippocampus" },
 	// { src: "/synapse.jpg",      alt: "Synapse electron micrograph",           caption: "Dendritic spine undergoing LTP" },
+
+
 	// Add more images above this line
 ];
 
-// ── Add your videos here ─────────────────────────────────────────────────────
+
+// ── Add your local video files here ──────────────────────────────────────────
+// Each entry: { src, title, caption? }
+// Place video files (.mp4, .webm) in the public/ folder, then reference as "/your-video.mp4"
+const localVideos: { src: string; title: string; caption?: string; square?: boolean }[] = [
+	{ src: "/cell10-gabazine10min_labeled.mp4", title: "GCaMP6s-expressing cortical neuron", square: true, caption: "A rat cortical neuron expressing a calcium indicator (GCaMP6s) that flashes bright green during a burst of activity leading to calcium entering the cell. 10 minutes in, I add a drug called gabazine that blocks GABA receptors that usually inhibit neurons, and the neuron starts to 'flash' more!" },
+	{ src: "/Track%201%20sequence-1_border.mp4", title: "HEK cells expressing fluorescent proteins", caption: "Human Embryonic Kidney (HEK) Cells expressing fluorescent proteins. CaMKIIa is a protein that likes to bind to GluN2B in the brain when it is activated by calcium. When I add ionomycin, that allows calcium into cells, and you can actually see the CaMKII (blue) start to overlap more with GluN2B (purple) as it binds to it more and more." },
+	{ src: "/acsf2.mp4", title: "CaMKII translocation in neurons", square: true, caption: "The dendrites of a rat cortical neuron expressing a fluorescently-labeled protein (mVenus-CaMKIIa). When the neuron is 'stimulated' by glutamate, that CaMKII gets activated and concentrates into puncta at synapses - the connections between neurons." },
+	// Add more local videos above this line
+];
+
+// ── Add your YouTube videos here ─────────────────────────────────────────────
 // Each entry: { embedUrl, title, caption? }
 // For YouTube: use the embed URL format https://www.youtube.com/embed/VIDEO_ID
 const videos: { embedUrl: string; title: string; caption?: string }[] = [
@@ -19,6 +32,7 @@ const videos: { embedUrl: string; title: string; caption?: string }[] = [
 ];
 
 const hasImages = images.length > 0;
+const hasLocalVideos = localVideos.length > 0;
 const hasVideos = videos.length > 0;
 ---
 
@@ -44,9 +58,28 @@ const hasVideos = videos.length > 0;
 			</section>
 		)}
 
-		{hasVideos && (
+		{hasLocalVideos && (
 			<section class="section reveal">
 				<h2 class="section-label">Videos</h2>
+				<div class="video-list">
+					{localVideos.map(vid => (
+						<figure class="video-card">
+							<div class={`video-wrap${vid.square ? ' video-wrap--square' : ''}`}>
+								<video controls loop muted playsinline>
+									<source src={vid.src} type="video/mp4" />
+									Your browser does not support the video tag.
+								</video>
+							</div>
+							{vid.caption && <figcaption>{vid.caption}</figcaption>}
+						</figure>
+					))}
+				</div>
+			</section>
+		)}
+
+		{hasVideos && (
+			<section class="section reveal">
+				<h2 class="section-label">YouTube</h2>
 				<div class="video-list">
 					{videos.map(vid => (
 						<figure class="video-card">
@@ -66,7 +99,7 @@ const hasVideos = videos.length > 0;
 			</section>
 		)}
 
-		{!hasImages && !hasVideos && (
+		{!hasImages && !hasLocalVideos && !hasVideos && (
 			<section class="empty-state reveal">
 				<div class="empty-reticle" aria-hidden="true">
 					<div class="reticle-ring"></div>
@@ -196,13 +229,39 @@ const hasVideos = videos.length > 0;
 		font-family: 'Space Mono', monospace;
 		font-size: 0.65rem;
 		color: var(--ink-muted);
-		line-height: 1.45;
+		line-height: 1.6;
 	}
 
 	/* ── Video list ── */
-	.video-list { display: flex; flex-direction: column; gap: 2.5rem; }
+	.video-list { display: flex; flex-direction: column; gap: 5rem; }
 
-	.video-card { display: flex; flex-direction: column; gap: 0.75rem; }
+	.video-card {
+		display: grid;
+		grid-template-columns: 3fr 2fr;
+		gap: 2.5rem;
+		align-items: center;
+	}
+	.video-card:nth-child(even) {
+		grid-template-columns: 2fr 3fr;
+	}
+	.video-card:nth-child(even) .video-wrap {
+		order: 2;
+	}
+	.video-card:nth-child(even) figcaption {
+		order: 1;
+		text-align: right;
+	}
+	@media (max-width: 600px) {
+		.video-card,
+		.video-card:nth-child(even) {
+			grid-template-columns: 1fr;
+		}
+		.video-card:nth-child(even) .video-wrap,
+		.video-card:nth-child(even) figcaption {
+			order: unset;
+			text-align: left;
+		}
+	}
 
 	.video-wrap {
 		position: relative;
@@ -213,9 +272,20 @@ const hasVideos = videos.length > 0;
 		background: var(--bg-2);
 		transition: border-color 0.3s, box-shadow 0.3s;
 	}
+	.video-wrap--square {
+		aspect-ratio: 1;
+	}
+
 	.video-wrap:hover {
 		border-color: rgba(0,255,239,0.35);
 		box-shadow: 0 0 25px rgba(0,255,239,0.1);
+	}
+
+	.video-wrap video {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
 	}
 
 	.video-wrap iframe {
