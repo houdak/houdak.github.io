@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
+import { join } from 'path';
 const firstName = "Houda";
 const lastName = "Khaled";
 
@@ -12,14 +13,12 @@ let podcastDescription = '';
 let episodes: Episode[] = [];
 
 try {
-	let xml: string;
-	try {
-		xml = readFileSync(new URL('../data/podcast.xml', import.meta.url), 'utf-8');
-	} catch {
-		xml = await fetch('https://frivolousscience.substack.com/feed', {
+	const xmlPath = join(process.cwd(), 'src/data/podcast.xml');
+	const xml = existsSync(xmlPath)
+		? readFileSync(xmlPath, 'utf-8')
+		: await fetch('https://frivolousscience.substack.com/feed', {
 			headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AstroBot/1.0)' }
 		}).then(r => r.text());
-	}
 	const channelPart = xml.split('<item>')[0];
 
 	// Cover art: extract original high-res URL embedded inside the CDN URL
