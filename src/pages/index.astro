@@ -14,11 +14,15 @@ let episodes: Episode[] = [];
 
 try {
 	const xmlPath = join(process.cwd(), 'src/data/podcast.xml');
+	console.log('[podcast] cwd:', process.cwd());
+	console.log('[podcast] xmlPath:', xmlPath);
+	console.log('[podcast] file exists:', existsSync(xmlPath));
 	const xml = existsSync(xmlPath)
 		? readFileSync(xmlPath, 'utf-8')
 		: await fetch('https://frivolousscience.substack.com/feed', {
 			headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AstroBot/1.0)' }
 		}).then(r => r.text());
+	console.log('[podcast] xml length:', xml.length);
 	const channelPart = xml.split('<item>')[0];
 
 	// Cover art: extract original high-res URL embedded inside the CDN URL
