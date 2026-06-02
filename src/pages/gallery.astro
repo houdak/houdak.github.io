@@ -65,10 +65,7 @@ const hasVideos = videos.length > 0;
 					{localVideos.map(vid => (
 						<figure class="video-card">
 							<div class={`video-wrap${vid.square ? ' video-wrap--square' : ''}`}>
-								<video controls loop muted playsinline>
-									<source src={vid.src} type="video/mp4" />
-									Your browser does not support the video tag.
-								</video>
+								<video controls loop muted playsinline src={vid.src}></video>
 							</div>
 							{vid.caption && <figcaption>{vid.caption}</figcaption>}
 						</figure>
@@ -125,6 +122,9 @@ const hasVideos = videos.length > 0;
 			});
 		}, { threshold: 0.05 });
 		reveals.forEach(el => io.observe(el));
+
+		// Force videos to load after client-side navigation (ViewTransitions doesn't trigger browser auto-load)
+		document.querySelectorAll<HTMLVideoElement>('video[src]').forEach(v => v.load());
 	});
 </script>
 
