@@ -128,20 +128,6 @@ function fmtDate(s: string) {
 	</p>
 </Layout>
 
-<script>
-	document.addEventListener('astro:page-load', () => {
-		const reveals = document.querySelectorAll<HTMLElement>('.reveal');
-		const io = new IntersectionObserver((entries) => {
-			entries.forEach(e => {
-				if (e.isIntersecting) {
-					(e.target as HTMLElement).classList.add('in-view');
-					io.unobserve(e.target);
-				}
-			});
-		}, { threshold: 0.1 });
-		reveals.forEach(el => io.observe(el));
-	});
-</script>
 
 <style>
 	main {

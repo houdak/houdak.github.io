@@ -110,23 +110,6 @@ const hasVideos = videos.length > 0;
 	</main>
 </Layout>
 
-<script>
-	document.addEventListener('astro:page-load', () => {
-		const reveals = document.querySelectorAll<HTMLElement>('.reveal');
-		const io = new IntersectionObserver((entries) => {
-			entries.forEach(e => {
-				if (e.isIntersecting) {
-					(e.target as HTMLElement).classList.add('in-view');
-					io.unobserve(e.target);
-				}
-			});
-		}, { threshold: 0.05 });
-		reveals.forEach(el => io.observe(el));
-
-		// Force videos to load after client-side navigation (ViewTransitions doesn't trigger browser auto-load)
-		document.querySelectorAll<HTMLVideoElement>('video[src]').forEach(v => v.load());
-	});
-</script>
 
 <style>
 	main {

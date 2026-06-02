@@ -55,6 +55,42 @@ const path = Astro.url.pathname;
 	</body>
 </html>
 
+<script>
+	// Runs once on initial load; listener persists and fires for every
+	// subsequent client-side navigation, so reveal + video logic is always
+	// registered before astro:page-load fires — avoiding the race condition
+	// where page-level module scripts load after the event fires.
+	document.addEventListener('astro:page-load', () => {
+		const reveals = document.querySelectorAll<HTMLElement>('.reveal');
+
+		// Immediately reveal elements already in the viewport (getBoundingClientRect
+		// is synchronous, unlike IntersectionObserver which is async and can miss
+		// elements during a ViewTransition swap).
+		reveals.forEach(el => {
+			const r = el.getBoundingClientRect();
+			if (r.top < window.innerHeight && r.bottom > 0) {
+				el.classList.add('in-view');
+			}
+		});
+
+		// IntersectionObserver for elements below the fold
+		const io = new IntersectionObserver((entries) => {
+			entries.forEach(e => {
+				if (e.isIntersecting) {
+					(e.target as HTMLElement).classList.add('in-view');
+					io.unobserve(e.target);
+				}
+			});
+		}, { threshold: 0.05 });
+		reveals.forEach(el => {
+			if (!el.classList.contains('in-view')) io.observe(el);
+		});
+
+		// Force video elements to load after client-side navigation
+		document.querySelectorAll<HTMLVideoElement>('video[src]').forEach(v => v.load());
+	});
+</script>
+
 <style is:global>
 	/* ── Fluorophore color tokens ── */
 	:root {
