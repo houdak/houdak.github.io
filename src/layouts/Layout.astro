@@ -37,10 +37,13 @@ const path = Astro.url.pathname;
 			<a href="/" class="nav-logo" aria-label="Home">HK</a>
 			<div class="nav-links">
 				<a href="/publications" class:list={[{ active: path.startsWith('/publications') }]}>
-					<span class="ch-dot mcherry"></span>Publications
+					<span class="ch-dot mcherry"></span>Scientific Publications
+				</a>
+				<a href="/other-work" class:list={[{ active: path.startsWith('/other-work') }]}>
+					<span class="ch-dot dapi"></span>Other Work
 				</a>
 				<a href="/gallery" class:list={[{ active: path.startsWith('/gallery') }]}>
-					<span class="ch-dot cfp"></span>Gallery
+					<span class="ch-dot cfp"></span>Fun Science Videos
 				</a>
 			</div>
 		</nav>
@@ -309,6 +312,10 @@ const path = Astro.url.pathname;
 	.ch-dot.mcherry {
 		background: var(--mcherry);
 		box-shadow: 0 0 6px var(--mcherry), 0 0 14px rgba(255,61,154,0.5);
+	}
+	.ch-dot.dapi {
+		background: var(--dapi);
+		box-shadow: 0 0 6px var(--dapi), 0 0 14px rgba(96,128,255,0.5);
 	}
 	.ch-dot.cfp {
 		background: var(--cfp);
